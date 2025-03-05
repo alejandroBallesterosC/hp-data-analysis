@@ -6,6 +6,7 @@
 #include <thread>
 #include <future>
 #include <map>
+#include <unordered_set>
 
 namespace hpda {
 

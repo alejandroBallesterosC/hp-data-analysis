@@ -206,7 +206,7 @@ def benchmark_groupby():
         df = create_pandas_dataframe(size)
         grouped = df.groupby("E").agg({"A": "mean", "B": "mean", "C": "mean", "D": "mean"})
         return grouped
-    
+
     def hpda_groupby(size):
         df = create_hpda_dataframe(size)
         # Set parallel execution for HPDA
