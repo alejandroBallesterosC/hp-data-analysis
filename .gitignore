@@ -1,0 +1,18 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+*.__pycache__
+.ipynb_checkpoints/
+# Log Files
+*.log
+# Virtual environments
+.venv
+# Environment Files
+.env
+# Other
+.DS_Store
+CLAUDE.md
