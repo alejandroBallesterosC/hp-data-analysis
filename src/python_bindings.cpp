@@ -1,8 +1,10 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 #include <pybind11/functional.h>
-#include <pybind11/numpy.h>
 #include "hpda/dataframe.h"
+#include <fstream>
+#include <sstream>
+#include <iostream>
 
 namespace py = pybind11;
 
@@ -64,17 +66,8 @@ hpda::DataFrame py_dict_to_dataframe(const py::dict& dict) {
         if (py::isinstance<py::list>(item.second)) {
             data[key] = py_list_to_column(py::cast<py::list>(item.second));
         }
-        else if (py::isinstance<py::array>(item.second)) {
-            // Handle NumPy arrays (simplified)
-            py::array arr = py::cast<py::array>(item.second);
-            py::list converted_list;
-            for (size_t i = 0; i < arr.size(); ++i) {
-                converted_list.append(arr[i]);
-            }
-            data[key] = py_list_to_column(converted_list);
-        }
         else {
-            throw py::type_error("DataFrame columns must be lists or arrays");
+            throw py::type_error("DataFrame columns must be lists");
         }
     }
     
@@ -101,7 +94,7 @@ py::dict dataframe_to_py_dict(const hpda::DataFrame& df) {
 
 }  // anonymous namespace
 
-PYBIND11_MODULE(hpda, m) {
+PYBIND11_MODULE(_hpda, m) {
     m.doc() = "High Performance Data Analysis library with pandas-like API";
     
     // Enum for execution policy
@@ -208,7 +201,6 @@ PYBIND11_MODULE(hpda, m) {
         }
         
         // Read data
-        size_t row_idx = 0;
         while (std::getline(file, line)) {
             std::istringstream ss(line);
             std::string token;
@@ -240,8 +232,6 @@ PYBIND11_MODULE(hpda, m) {
                 
                 col_idx++;
             }
-            
-            row_idx++;
         }
         
         return hpda::DataFrame(std::move(data));

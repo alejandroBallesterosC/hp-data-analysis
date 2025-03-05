@@ -11,7 +11,6 @@
 #include <variant>
 #include <mutex>
 #include <optional>
-#include <execution>
 #include <future>
 
 namespace hpda {
@@ -85,6 +84,9 @@ public:
     // Distributed execution options
     void set_num_threads(int threads);
     void set_cluster_nodes(const std::vector<std::string>& node_addresses);
+    
+    // For GroupByResult access
+    friend class GroupByResult;
     
 private:
     std::unordered_map<std::string, Column> data_;

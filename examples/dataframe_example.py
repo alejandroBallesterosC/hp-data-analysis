@@ -46,13 +46,13 @@ def demo_performance_scaling(size=100000):
     """
     print(f"\nPerformance test with {size} rows...")
     
-    # Create large DataFrame
+    # Create large DataFrame with lists (not NumPy arrays)
     data = {
-        "A": np.random.randint(0, 1000, size),
-        "B": np.random.random(size) * 100,
-        "C": np.random.random(size) * 100,
-        "D": np.random.random(size) * 100,
-        "E": np.random.random(size) * 100
+        "A": [np.random.randint(0, 1000) for _ in range(size)],
+        "B": [np.random.random() * 100 for _ in range(size)],
+        "C": [np.random.random() * 100 for _ in range(size)],
+        "D": [np.random.random() * 100 for _ in range(size)],
+        "E": [np.random.random() * 100 for _ in range(size)]
     }
     
     df = hpda.DataFrame(data)

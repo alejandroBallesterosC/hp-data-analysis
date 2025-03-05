@@ -74,14 +74,44 @@ result = large_df.groupby("category").mean()
 
 ## Benchmarks
 
-Performance comparison with pandas for common operations (using a dataset with 1M rows):
+Performance comparison with pandas for common operations (using a dataset with 500K rows):
 
-| Operation | Pandas | HPDA (Sequential) | HPDA (Parallel - 4 cores) | HPDA (GPU) |
-|-----------|--------|-------------------|---------------------------|------------|
-| mean()    | 1x     | 2.5x              | 8x                        | 20x        |
-| std()     | 1x     | 3x                | 10x                       | 25x        |
-| sort()    | 1x     | 2x                | 6x                        | 15x        |
-| groupby() | 1x     | 2.5x              | 7x                        | 18x        |
+| Operation | Pandas | HPDA (Parallel - 4 cores) | Memory Reduction |
+|-----------|--------|---------------------------|------------------|
+| mean()    | 1x     | 1.7x                      | Comparable       |
+| std()     | 1x     | 2.6x                      | 5.9x             |
+| sort()    | 1x     | 0.65x                     | Comparable       |
+| groupby() | 1x     | 0.99x                     | Better for small groups |
+
+The table shows that HPDA performs:
+- On par with pandas for groupby with few unique values (5)
+- 70-84% of pandas speed for groupby with moderate unique values (50+)
+- 2.6x faster than pandas for standard deviation calculation
+- 1.7x faster for mean calculation
+
+### Recent Optimizations
+
+#### 1. Sort Operations
+- Implemented parallel divide-and-conquer algorithm with multi-threaded chunk sorting
+- Added heap-based merge strategy for combining sorted chunks
+- Pre-allocated result containers for memory efficiency
+- Added dynamic policy selection based on dataset size
+
+#### 2. GroupBy Operations
+- Created custom hash-based implementation with optimized key handling
+- Implemented thread-local grouping to minimize lock contention
+- Added specialized radix-bucketing algorithm for string categorical columns
+- Implemented data sampling for better group cardinality estimation
+- Parallelized aggregation computations based on column count
+- Added memory pre-allocation with adaptive sizing based on key count
+- Optimized thread distribution for multi-key vs single-key groupby operations
+
+#### 3. Merge/Join Operations
+- Replaced string conversion with direct DataValue comparison
+- Added parallelized processing of left dataframe chunks
+- Implemented thread-local result accumulation to avoid lock contention
+- Pre-allocated memory based on result size estimation
+- Added complete implementation of RIGHT/OUTER join logic
 
 ## Advanced Usage
 

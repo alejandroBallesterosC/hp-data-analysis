@@ -20,7 +20,7 @@ class get_pybind_include:
 
 ext_modules = [
     Extension(
-        'hpda',
+        'hpda._hpda',
         ['src/python_bindings.cpp', 'src/dataframe.cpp'],
         include_dirs=[
             # Path to pybind11 headers
